@@ -16,8 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class GalleryActivity extends ActionBarActivity
@@ -46,9 +46,6 @@ public class GalleryActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        String s = String.valueOf(Utils.ARRAY_GENRES.size());
-        Toast.makeText(this,s,Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -56,22 +53,12 @@ public class GalleryActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, PlaceholderFragment.newInstance(position))
                 .commit();
     }
 
     public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
+        mTitle = Utils.ARRAY_GENRES.get(number);
     }
 
     public void restoreActionBar() {
@@ -139,6 +126,8 @@ public class GalleryActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
+            GridView gridView = (GridView) rootView.findViewById(R.id.gridView);
+            gridView.setAdapter(new MyAdapter(container.getContext(),Utils.ARRAY_MOVIES));
             return rootView;
         }
 

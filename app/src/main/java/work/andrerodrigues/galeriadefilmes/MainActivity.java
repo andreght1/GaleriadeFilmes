@@ -23,8 +23,10 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, Utils.URL_GENRES, null, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest jsObjRequest;
+        jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, Utils.URL_GENRES(null), null, new Response.Listener<JSONObject>() {
                     JSONArray jsonArray = new JSONArray();
 
                     @Override
@@ -33,6 +35,35 @@ public class MainActivity extends ActionBarActivity {
                             jsonArray = response.getJSONArray("genres");
                             for (int i=0; i<jsonArray.length(); i++) {
                                 Utils.ARRAY_GENRES.add(jsonArray.getJSONObject(i).getJSONObject("Genre").getString("name"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+        // Access the RequestQueue through your singleton class.
+        MySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+
+        jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, Utils.URL_MOVIES("4"), null, new Response.Listener<JSONObject>() {
+                    JSONArray jsonArray = new JSONArray();
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            jsonArray = response.getJSONArray("movies");
+                            for (int i=0; i<jsonArray.length(); i++) {
+                                String filename = Utils.URL_BASE + Utils.DIR_IMAGE;
+                                filename += jsonArray.getJSONObject(i).getJSONObject("Movie").getString("filename");
+                                Utils.ARRAY_MOVIES.add(filename);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
